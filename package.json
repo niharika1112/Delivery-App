@@ -1,0 +1,15 @@
+{
+  "name": "deliveryapp",
+  "version": "1.0.0",
+  "description": "a full stack App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "MERN",
+    "Stack"
+  ],
+  "author": "Niharika",
+  "license": "ISC"
+}
