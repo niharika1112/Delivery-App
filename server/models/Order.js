@@ -1,3 +1,4 @@
+// File: server/models/Order.js (Replace your current Order.js with this)
 const mongoose = require('mongoose');
 
 const OrderItemSchema = new mongoose.Schema({
@@ -34,8 +35,8 @@ const OrderTrackingSchema = new mongoose.Schema({
 const OrderSchema = new mongoose.Schema({
   orderNumber: {
     type: String,
-    unique: true,
-    required: true
+    unique: true
+    // Remove required: true - we'll auto-generate this
   },
   
   // Stakeholders
@@ -132,9 +133,18 @@ const OrderSchema = new mongoose.Schema({
 
 // Generate unique order number before saving
 OrderSchema.pre('save', async function(next) {
-  if (this.isNew) {
-    const count = await this.constructor.countDocuments();
-    this.orderNumber = `DE${Date.now()}${count.toString().padStart(4, '0')}`;
+  if (this.isNew && !this.orderNumber) {
+    // Generate order number: DE + timestamp + random 4 digits
+    const timestamp = Date.now().toString().slice(-8); // Last 8 digits of timestamp
+    const random = Math.floor(1000 + Math.random() * 9000); // Random 4-digit number
+    this.orderNumber = `DE${timestamp}${random}`;
+    
+    // Ensure uniqueness (very unlikely to have duplicates, but just in case)
+    const existing = await this.constructor.findOne({ orderNumber: this.orderNumber });
+    if (existing) {
+      const newRandom = Math.floor(1000 + Math.random() * 9000);
+      this.orderNumber = `DE${timestamp}${newRandom}`;
+    }
   }
   next();
 });
